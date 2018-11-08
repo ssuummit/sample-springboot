@@ -1,0 +1,86 @@
+management:
+  context-path: /manage
+  port: ${SERVER_PORT}
+
+# http://www.eclipse.org/jetty/documentation/current/quickstart-config-what.html
+# https://dev.eclipse.org/mhonarc/lists/jetty-users/msg04751.html 
+jetty:
+  # The number of handler threads that will actually process requests
+  workerThreads: 20
+  # The size of the blocking queue for the threadpool. This is shared between
+  # acceptors, selectors and worker threads
+  blockingQueueSize: 13
+  # OS configuration for maximum outstanding requests in the socket. This should
+  # be equal or greater than the space you've considered in the blocking queue
+  # for outstanding network requests.
+  # This cannot be increased beyond the operating system limits, though.
+  # See http://stackoverflow.com/questions/2193146/java-socket-accept-queue-length
+  acceptQueueSize: 20
+  # The number of threads to listen for connections. Acceptors just listen for
+  # connections, and when a new connection is established just add it to a queue
+  # Typically, 1 should be sufficient
+  acceptors: 1
+  # Selectors are responsible for all network traffic. Typically, they should be
+  # equal to the number of cores
+  selectors: 4
+  # The idle timeout for a thread in Jety's threadpool. Note that this applicable
+  # for acceptors, selectors and worker threads
+  workerThreadIdleTimeoutMs: 120000
+  serverPort: ${SERVER_PORT}
+  
+ 
+
+# Set debug: true to get some really, really detailed messages
+debug: false
+
+swagger:
+  title: Sample Springboot
+  description: Sample Springboot
+  version: 1.0
+  contact: sumit.nagariya@gmail.com
+
+spring:
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      settings.web-allow-others: true
+  application:
+    name: sample-springboot
+  #http://docs.spring.io/spring-boot/docs/current-SNAPSHOT/reference/htmlsingle/#howto-customize-the-jackson-objectmapper
+  jackson:
+    deserialization:
+      use-big-decimal-for-floats: true
+      fail-on-unknown-properties: true
+    serialization:
+      write-bigdecimal-as-plain: true
+  jpa:
+    database: h2
+    show-sql: true
+    generate-ddl: true
+    hibernate:
+      ddl-auto: create
+    datasource:
+      platform: h2
+
+database:
+  packagesToScan: com.xyz.sample.dal.model
+  hikari:
+    dataSourceClassName: org.h2.jdbcx.JdbcDataSource
+    maximumPoolSize: 10
+    maxLifetime: 1800000
+    idleTimeout: 600000
+    autoCommit: false
+    dataSourceProperties:
+      url: jdbc:h2:./sample-springboot
+      user: root
+      password:
+
+  # // http://blog.jhades.org/performance-tuning-of-spring-hibernate-applications/
+  hibernateProperties:
+    hibernate.jdbc.batch_size: 10000
+    hibernate.order_inserts: true
+    hibernate.order_updates: true
+    hibernate.generate_statistics: true
+    hibernate.use_sql_comments: false
+    hibernate.hbm2ddl.auto: update
